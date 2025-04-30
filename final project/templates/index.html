@@ -1,0 +1,529 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Языковой тренажер</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 200% 200%;
+            animation: gradientBG 15s ease infinite;
+            color: white;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        h1, h2, p {
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .countries {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .country {
+            width: 120px;
+            height: 120px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(1, 27, 99, 0.1);
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .country:hover {
+            transform: scale(1.05);
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .country-name {
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            width: 100%;
+            padding: 8px 0;
+            text-align: center;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .select-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(51, 233, 14, 0.8);
+            color: rgb(255, 255, 255);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .country:hover .select-btn {
+            opacity: 1;
+        }
+
+        .difficulty {
+            display: none;
+            margin: 20px 0;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .difficulty-btn {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .easy {
+            background-color: rgba(139, 195, 74, 0.8);
+        }
+
+        .normal {
+            background-color: rgba(255, 193, 7, 0.8);
+        }
+
+        .hard {
+            background-color: rgba(244, 67, 54, 0.8);
+        }
+
+        .difficulty-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .game-area {
+            display: none;
+            margin-top: 30px;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+        }
+
+        .word-display {
+            font-size: 24px;
+            margin: 20px 0;
+            min-height: 36px;
+        }
+
+        .mic-btn {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: rgba(33, 150, 243, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .mic-btn:hover {
+            background-color: rgba(11, 125, 218, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            min-height: 27px;
+        }
+
+        .correct {
+            color: #4CAF50;
+        }
+
+        .incorrect {
+            color: #F44336;
+        }
+
+        .next-btn {
+            padding: 10px 20px;
+            background-color: rgba(156, 39, 176, 0.8);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            display: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .next-btn:hover {
+            background-color: rgba(156, 39, 176, 1);
+            transform: translateY(-2px);
+        }
+
+        .score {
+            font-size: 18px;
+            margin-top: 15px;
+        }
+
+        .correction-input {
+            margin-top: 15px;
+            display: none;
+        }
+
+        .correction-input input {
+            padding: 8px;
+            width: 200px;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .correction-btn {
+            padding: 8px 15px;
+            background-color: rgba(96, 125, 139, 0.8);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .correction-btn:hover {
+            background-color: rgba(96, 125, 139, 1);
+            transform: translateY(-2px);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://www.transparenttextures.com/patterns/always-grey.png');
+            opacity: 0.05;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Salingo</h1>
+    <p>Выберите страну и уровень сложности, затем произносите слова на выбранном языке</p>
+    
+    <div class="countries">
+        <div class="country" style="background-image: url('https://flagcdn.com/w160/cz.jpg');" data-lang="cs-CZ" data-name="Чехия">
+            <div class="country-name">Чехия</div>
+            <button class="select-btn">Выбрать Чехию</button>
+        </div>
+        <div class="country" style="background-image: url('https://flagcdn.com/w160/gb.jpg');" data-lang="en-GB" data-name="Англия">
+            <div class="country-name">Англия</div>
+            <button class="select-btn">Выбрать Англию</button>
+        </div>
+        <div class="country" style="background-image: url('https://flagcdn.com/w160/de.jpg');" data-lang="de-DE" data-name="Германия">
+            <div class="country-name">Германия</div>
+            <button class="select-btn">Выбрать Германию</button>
+        </div>
+        <div class="country" style="background-image: url('https://flagcdn.com/w160/fr.jpg');" data-lang="fr-FR" data-name="Франция">
+            <div class="country-name">Франция</div>
+            <button class="select-btn">Выбрать Францию</button>
+        </div>
+        <div class="country" style="background-image: url('https://flagcdn.com/w160/ua.jpg');" data-lang="uk-UA" data-name="Украина">
+            <div class="country-name">Украина</div>
+            <button class="select-btn">Выбрать Украину</button>
+        </div>
+        <div class="country" style="background-image: url('https://flagcdn.com/w160/it.jpg');" data-lang="it-IT" data-name="Италия">
+            <div class="country-name">Италия</div>
+            <button class="select-btn">Выбрать Италию</button>
+        </div>
+        <div class="country" style="background-image: url('https://flagcdn.com/w160/es.jpg');" data-lang="es-ES" data-name="Испания">
+            <div class="country-name">Испания</div>
+            <button class="select-btn">Выбрать Испанию</button>
+        </div>
+        <div class="country" style="background-image: url('https://flagcdn.com/w160/gr.jpg');" data-lang="el-GR" data-name="Греция">
+            <div class="country-name">Греция</div>
+            <button class="select-btn">Выбрать Грецию</button>
+        </div>
+        <div class="country" style="background-image: url('https://flagcdn.com/w160/hu.jpg');" data-lang="hu-HU" data-name="Венгрия">
+            <div class="country-name">Венгрия</div>
+            <button class="select-btn">Выбрать Венгрию</button>
+        </div>
+    </div>
+    
+    <div class="difficulty">
+        <h2>Выберите уровень сложности</h2>
+        <button class="difficulty-btn easy" data-difficulty="easy">Легкий</button>
+        <button class="difficulty-btn normal" data-difficulty="normal">Средний</button>
+        <button class="difficulty-btn hard" data-difficulty="hard">Сложный</button>
+    </div>
+    
+    <div class="game-area">
+        <h2>Произнесите слово:</h2>
+        <div class="word-display"></div>
+        <button class="mic-btn">🎤</button>
+        <div class="result"></div>
+        <div class="correction-input">
+            <input type="text" placeholder="Введите правильный вариант">
+            <button class="correction-btn">Подтвердить</button>
+        </div>
+        <button class="next-btn">Следующее слово</button>
+        <div class="score"></div>
+    </div>
+
+    <script>
+        // Слова для разных языков и уровней сложности
+        const wordsDatabase = {
+            'cs-CZ': {
+                easy: ['ahoj', 'dům', 'jablko', 'voda', 'slunce', 'matka', 'otec', 'kniha', 'škola', 'auto'],
+                normal: ['dobrý den', 'restaurace', 'knihovna', 'nádraží', 'letiště', 'nemocnice', 'univerzita', 'divadlo', 'kavárna', 'obchod'],
+                hard: ['neuvěřitelné', 'zodpovědnost', 'překvapení', 'všechno nejlepší', 'porozumění', 'zdvořilost', 'sousedství', 'spokojenost', 'zachránit', 'obdivuhodný']
+            },
+            'en-GB': {
+                easy: ['hello', 'house', 'apple', 'water', 'sun', 'mother', 'father', 'book', 'school', 'car'],
+                normal: ['good morning', 'restaurant', 'library', 'station', 'airport', 'hospital', 'university', 'theatre', 'cafe', 'shop'],
+                hard: ['unbelievable', 'responsibility', 'surprise', 'happy birthday', 'understanding', 'politeness', 'neighbourhood', 'satisfaction', 'rescue', 'admirable']
+            },
+            'de-DE': {
+                easy: ['hallo', 'haus', 'apfel', 'wasser', 'sonne', 'mutter', 'vater', 'buch', 'schule', 'auto'],
+                normal: ['guten tag', 'restaurant', 'bibliothek', 'bahnhof', 'flughafen', 'krankenhaus', 'universität', 'theater', 'café', 'geschäft'],
+                hard: ['unglaublich', 'verantwortung', 'überraschung', 'alles gute', 'verständnis', 'höflichkeit', 'nachbarschaft', 'zufriedenheit', 'rettung', 'bewundernswert']
+            },
+            'fr-FR': {
+                easy: ['bonjour', 'maison', 'pomme', 'eau', 'soleil', 'mère', 'père', 'livre', 'école', 'voiture'],
+                normal: ['bon matin', 'restaurant', 'bibliothèque', 'gare', 'aéroport', 'hôpital', 'université', 'théâtre', 'café', 'magasin'],
+                hard: ['incroyable', 'responsabilité', 'surprise', 'joyeux anniversaire', 'compréhension', 'politesse', 'quartier', 'satisfaction', 'sauvetage', 'admirable']
+            },
+            'uk-UA': {
+                easy: ['привіт', 'дім', 'яблуко', 'вода', 'сонце', 'мати', 'батько', 'книга', 'школа', 'авто'],
+                normal: ['добрий день', 'ресторан', 'бібліотека', 'станція', 'аеропорт', 'лікарня', 'університет', 'театр', 'кафе', 'магазин'],
+                hard: ['неймовірно', 'відповідальність', 'сюрприз', 'з днем народження', 'розуміння', 'ввічливість', 'сусідство', 'задоволення', 'порятунок', 'захоплюючий']
+            },
+            'it-IT': {
+                easy: ['ciao', 'casa', 'mela', 'acqua', 'sole', 'madre', 'padre', 'libro', 'scuola', 'auto'],
+                normal: ['buongiorno', 'ristorante', 'biblioteca', 'stazione', 'aeroporto', 'ospedale', 'università', 'teatro', 'caffè', 'negozio'],
+                hard: ['incredibile', 'responsabilità', 'sorpresa', 'buon compleanno', 'comprensione', 'cortesia', 'quartiere', 'soddisfazione', 'salvataggio', 'ammirevole']
+            },
+            'es-ES': {
+                easy: ['hola', 'casa', 'manzana', 'agua', 'sol', 'madre', 'padre', 'libro', 'escuela', 'coche'],
+                normal: ['buenos días', 'restaurante', 'biblioteca', 'estación', 'aeropuerto', 'hospital', 'universidad', 'teatro', 'cafetería', 'tienda'],
+                hard: ['increíble', 'responsabilidad', 'sorpresa', 'feliz cumpleaños', 'comprensión', 'cortesía', 'vecindario', 'satisfacción', 'rescate', 'admirable']
+            },
+            'el-GR': {
+                easy: ['γεια', 'σπίτι', 'μήλο', 'νερό', 'ήλιος', 'μητέρα', 'πατέρας', 'βιβλίο', 'σχολείο', 'αυτοκίνητο'],
+                normal: ['καλημέρα', 'εστιατόριο', 'βιβλιοθήκη', 'σταθμός', 'αεροδρόμιο', 'νοσοκομείο', 'πανεπιστήμιο', 'θέατρο', 'καφετέρια', 'κατάστημα'],
+                hard: ['απίστευτο', 'ευθύνη', 'έκπληξη', 'χρόνια πολλά', 'κατανόηση', 'ευγένεια', 'γειτονιά', 'ικανοποίηση', 'διασώσει', 'αξιοθαύμαστος']
+            },
+            'hu-HU': {
+                easy: ['szia', 'ház', 'alma', 'víz', 'nap', 'anya', 'apa', 'könyv', 'iskola', 'autó'],
+                normal: ['jó napot', 'étterem', 'könyvtár', 'pályaudvar', 'repülőtér', 'kórház', 'egyetem', 'színház', 'kávézó', 'bolt'],
+                hard: ['hihetetlen', 'felelősség', 'meglepetés', 'boldog születésnapot', 'megértés', 'udvariasság', 'szomszédság', 'elégedettség', 'mentés', 'csodálatra méltó']
+            }
+        };
+
+        let selectedLanguage = '';
+        let selectedDifficulty = '';
+        let currentWord = '';
+        let score = 0;
+        let attempts = 0;
+        let words = [];
+        let recognition;
+        
+        // Инициализация распознавания речи
+        function initSpeechRecognition() {
+            window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (!window.SpeechRecognition) {
+                alert('Ваш браузер не поддерживает распознавание речи. Попробуйте Chrome или Edge.');
+                return false;
+            }
+            
+            recognition = new window.SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            
+            return true;
+        }
+        
+        // Выбор страны
+        document.querySelectorAll('.country').forEach(country => {
+            country.addEventListener('click', function() {
+                selectedLanguage = this.getAttribute('data-lang');
+                const countryName = this.getAttribute('data-name');
+                
+                document.querySelector('.difficulty').style.display = 'block';
+                document.querySelector('.game-area').style.display = 'none';
+                
+                // Инициализируем распознавание речи при выборе языка
+                if (!initSpeechRecognition()) {
+                    document.querySelector('.mic-btn').disabled = true;
+                }
+                
+                alert(`Вы выбрали ${countryName}. Теперь выберите уровень сложности.`);
+            });
+        });
+        
+        // Выбор уровня сложности
+        document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                selectedDifficulty = this.getAttribute('data-difficulty');
+                words = [...wordsDatabase[selectedLanguage][selectedDifficulty]];
+                
+                document.querySelector('.game-area').style.display = 'block';
+                startGame();
+            });
+        });
+        
+        // Начало игры
+        function startGame() {
+            score = 0;
+            attempts = 0;
+            updateScore();
+            nextWord();
+        }
+        
+        // Следующее слово
+        function nextWord() {
+            if (words.length === 0) {
+                // Если слова закончились, перемешиваем заново
+                words = [...wordsDatabase[selectedLanguage][selectedDifficulty]];
+            }
+            
+            const randomIndex = Math.floor(Math.random() * words.length);
+            currentWord = words[randomIndex];
+            words.splice(randomIndex, 1);
+            
+            document.querySelector('.word-display').textContent = currentWord;
+            document.querySelector('.result').textContent = '';
+            document.querySelector('.result').className = 'result';
+            document.querySelector('.next-btn').style.display = 'none';
+            document.querySelector('.correction-input').style.display = 'none';
+        }
+        
+        // Обновление счета
+        function updateScore() {
+            document.querySelector('.score').textContent = `Правильно: ${score} из ${attempts}`;
+        }
+        
+        // Обработка результатов распознавания
+        function handleRecognitionResult(recognizedText) {
+            document.querySelector('.result').textContent = `Вы сказали: ${recognizedText}`;
+            
+            attempts++;
+            if (recognizedText.toLowerCase() === currentWord.toLowerCase()) {
+                document.querySelector('.result').className = 'result correct';
+                document.querySelector('.result').textContent += ' - Правильно!';
+                score++;
+                document.querySelector('.next-btn').style.display = 'inline-block';
+            } else {
+                document.querySelector('.result').className = 'result incorrect';
+                document.querySelector('.result').textContent += ` - Неправильно.`;
+                
+                // Показываем поле для ручного ввода правильного варианта
+                document.querySelector('.correction-input').style.display = 'block';
+                document.querySelector('.correction-input input').focus();
+            }
+            
+            updateScore();
+        }
+        
+        // Кнопка микрофона
+        document.querySelector('.mic-btn').addEventListener('click', function() {
+            if (!currentWord || !recognition) return;
+            
+            this.disabled = true;
+            this.textContent = 'Говорите...';
+            document.querySelector('.result').textContent = 'Слушаю...';
+            document.querySelector('.result').className = 'result';
+            
+            recognition.lang = selectedLanguage;
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                handleRecognitionResult(transcript);
+            };
+            
+            recognition.onerror = (event) => {
+                document.querySelector('.result').className = 'result incorrect';
+                document.querySelector('.result').textContent = 'Ошибка распознавания: ' + event.error;
+            };
+            
+            recognition.onend = () => {
+                document.querySelector('.mic-btn').textContent = '🎤';
+                document.querySelector('.mic-btn').disabled = false;
+            };
+            
+            recognition.start();
+        });
+        
+        // Кнопка подтверждения ручного ввода
+        document.querySelector('.correction-btn').addEventListener('click', function() {
+            const correction = document.querySelector('.correction-input input').value.trim();
+            if (correction) {
+                if (correction.toLowerCase() === currentWord.toLowerCase()) {
+                    score++;
+                    updateScore();
+                    document.querySelector('.result').textContent += ' Теперь правильно!';
+                    document.querySelector('.result').className = 'result correct';
+                } else {
+                    document.querySelector('.result').textContent += ` Правильный вариант: ${currentWord}`;
+                }
+                
+                document.querySelector('.correction-input').style.display = 'none';
+                document.querySelector('.correction-input input').value = '';
+                document.querySelector('.next-btn').style.display = 'inline-block';
+            }
+        });
+        
+        // Обработка Enter в поле ручного ввода
+        document.querySelector('.correction-input input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.querySelector('.correction-btn').click();
+            }
+        });
+        
+        // Кнопка следующего слова
+        document.querySelector('.next-btn').addEventListener('click', nextWord);
+    </script>
+</body>
+</html>

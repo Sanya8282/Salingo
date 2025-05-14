@@ -10,6 +10,9 @@
 
 ## Библиотеки, которые я буду использовать
 - Web Speech API
+- flask
+- speechrecognition
+- pyaudio
 
 ## Референсы, которые мне пригодятся
 - doulingo
